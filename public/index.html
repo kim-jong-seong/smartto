@@ -526,8 +526,9 @@
             maxPlayers = state.maxPlayers;
             roles = state.roles;
             currentPlayers = state.currentPlayers;
+            const wasStarted = gameStarted;  // 이전 게임 상태 저장
             gameStarted = state.gameStarted;
-            isHost = state.isHost;  // 방장 상태 업데이트
+            isHost = state.isHost;
             
             document.getElementById('max-players').value = maxPlayers;
             document.getElementById('players-info').textContent = 
@@ -548,7 +549,8 @@
                 updateRolesDisplay();
             }
             
-            if (gameStarted) {
+            // 게임이 처음 시작될 때만 캔버스 초기화
+            if (gameStarted && !wasStarted) {
                 document.getElementById('game-status').textContent = '중복되지 않은 항목이 당신의 결과입니다.\n동전으로 스크래치하세요!';
                 document.getElementById('game-status').style.whiteSpace = 'pre-line';
                 document.getElementById('game-status').style.textAlign = 'center';
