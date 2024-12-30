@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>뽑기</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .card {
+                padding: 10px;
+                margin-bottom: 10px;
+            }
+
+            .settings {
+                flex-wrap: wrap;
+            }
+
+            h2 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
+            button {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            input {
+                font-size: 14px;
+            }
+
+            .room-input {
+                width: 100px;
+            }
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .settings {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            align-items: center;
+        }
+        
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #3b82f6;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .coin-button {
+            padding: 4px;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .coin-button:hover {
+            transform: scale(1.1);
+        }
+
+        .coin-button.selected {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: scale(0.95);
+        }
+        
+        input {
+            width: 60px;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .room-input {
+            width: 120px;
+            padding: 8px;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        
+        .scratch-area {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+        
+        .result {
+            position: absolute;
+            inset: 0;
+            display: block;
+            background: white;
+            overflow: hidden;
+        }
+        
+        canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            touch-action: none;
+        }
+        
+        .coin {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            pointer-events: none;
+            transform: translate(-70%, -70%);
+            transition: transform 0.05s;
+            z-index: 10;
+        }
+        
+        .coin img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .leave-button {
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .leave-button:hover {
+            background-color: #dc2626;
+        }
+
+        .room-info {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: #ef4444;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .room-selection {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .room-selection button {
+            margin: 5px;
+        }
+
+        .room-code {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #3b82f6;
+        }
+
+        .roles-container {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .role-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+        }
+
+        .role-item input[type="text"] {
+            width: 100px;
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .role-item button {
+            padding: 4px 8px;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .add-role-button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #10b981;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .add-role-button:hover {
+            background-color: #059669;
+        }
+
+        .role-total {
+            margin-top: 10px;
+            text-align: right;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 방 선택 카드 -->
+        <div class="card" id="room-selection">
+            <h2>뽑기</h2>
+            <div class="room-selection">
+                <button onclick="createRoom()">방 만들기</button>
+                <div style="margin: 20px 0;">
+                    <input type="text" id="room-code-input" class="room-input" placeholder="방 코드 입력" maxlength="4" pattern="[0-9]*">
+                    <button onclick="joinRoom()">참가하기</button>
+                </div>
+                <div id="error-message" class="error-message"></div>
+            </div>
+        </div>
+
+                    <!-- 게임 카드 -->
+        <div class="card" id="game-card" style="display: none;">
+            <h2>나만 아니면 됩니다</h2>
+            <div class="room-info">
+                방 코드: <span id="current-room-code"></span>
+                <button onclick="leaveRoom()" class="leave-button">나가기</button>
+            </div>
+            <div class="player-status">
+                <p id="players-info">현재 참가자: 0 / 5</p>
+                <p id="role-info">역할: 참가자</p>
+            </div>
+            <div class="settings-container" id="host-controls" style="display: none;">
+                <div class="settings">
+                    <span>최대 인원:</span>
+                    <button onclick="changeMaxPlayers(-1)">-</button>
+                    <input type="number" id="max-players" value="5" min="1" onchange="updateMaxPlayers(this.value)">
+                    <button onclick="changeMaxPlayers(1)">+</button>
+                </div>
+                <div class="roles-container">
+                    <h3>항목 설정</h3>
+                    <div id="roles-list"></div>
+                    <button class="add-role-button" onclick="addRole()">+ 항목 추가</button>
+                    <div class="role-total" id="role-total"></div>
+                </div>
+                <button onclick="startGame()" id="start-button" style="width: 100%; margin-top: 10px;">
+                    시작
+                </button>
+            </div>
+            <div id="waiting-message">
+                다른 참가자를 기다리는 중...
+            </div>
+        </div>
+        
+        <!-- 게임 영역 -->
+        <div class="card" id="game-area" style="display: none;">
+            <div class="game-status" id="game-status"></div>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div id="coin-button" class="coin-button" onclick="toggleCoin()" style="cursor: pointer; display: inline-block;">
+                    <img src="image/coin.png" alt="coin" style="width: 50px; height: 50px;">
+                </div>
+            </div>
+            <div class="scratch-area" id="scratch-container">
+                <div class="result" id="result"></div>
+                <canvas id="scratch-canvas"></canvas>
+                <div class="coin" id="coin" style="display: none;">
+                    <img src="image/coin.png" alt="coin">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let socket;
+        let playerId;
+        let roomCode;
+        let isHost = false;
+        let maxPlayers = 5;
+        let roles = [
+            { name: "당첨", count: 3 },
+            { name: "꽝", count: 2 }
+        ];
+        let currentPlayers = 0;
+        let gameStarted = false;
+        let selectedCoin = false;
+        let isDrawing = false;
+        let lastPosition = { x: 0, y: 0 };
+
+        function updateRolesDisplay() {
+            const container = document.getElementById('roles-list');
+            const totalDiv = document.getElementById('role-total');
+            container.innerHTML = '';
+            
+            let totalCount = 0;
+            roles.forEach((role, index) => {
+                const roleDiv = document.createElement('div');
+                roleDiv.className = 'role-item';
+                roleDiv.innerHTML = `
+                    <input type="text" value="${role.name}" onchange="updateRoleName(${index}, this.value)">
+                    <button onclick="changeRoleCount(${index}, -1)">-</button>
+                    <input type="number" value="${role.count}" min="0" style="width: 50px;" 
+                           onchange="updateRoleCount(${index}, this.value - ${role.count})">
+                    <button onclick="changeRoleCount(${index}, 1)">+</button>
+                    <button onclick="removeRole(${index})">삭제</button>
+                `;
+                container.appendChild(roleDiv);
+                totalCount += role.count;
+            });
+            
+            totalDiv.textContent = `총 인원: ${totalCount}명 / ${maxPlayers}명`;
+            
+            const startButton = document.getElementById('start-button');
+            startButton.disabled = totalCount !== currentPlayers;
+        }
+
+        function addRole() {
+            roles.push({ name: "새 역할", count: 1 });
+            updateRolesDisplay();
+            sendSettings();
+        }
+
+        function removeRole(index) {
+            roles.splice(index, 1);
+            if (roles.length === 0) {
+                roles.push({ name: "당첨", count: 1 });
+            }
+            updateRolesDisplay();
+            sendSettings();
+        }
+
+        function updateRoleName(index, name) {
+            roles[index].name = name;
+            sendSettings();
+        }
+
+        function updateRoleCount(index, value) {
+            const newCount = Math.max(0, roles[index].count + Number(value));
+            roles[index].count = newCount;
+            updateRolesDisplay();
+            sendSettings();
+        }
+
+        function changeRoleCount(index, delta) {
+            updateRoleCount(index, delta);
+        }
+
+        function sendSettings() {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'updateSettings',
+                    playerId,
+                    maxPlayers,
+                    roles
+                }));
+            }
+        }
+
+        const canvas = document.getElementById('scratch-canvas');
+        const ctx = canvas.getContext('2d');
+        const container = document.getElementById('scratch-container');
+        const coin = document.getElementById('coin');
+        const coinButton = document.getElementById('coin-button');
+        
+        function connectWebSocket() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            socket = new WebSocket(`${protocol}//${window.location.host}`);
+
+            socket.onopen = () => {
+                document.getElementById('room-selection').style.display = 'block';
+                document.getElementById('game-card').style.display = 'none';
+                document.getElementById('game-area').style.display = 'none';
+            };
+
+            socket.onclose = () => {
+                setTimeout(connectWebSocket, 3000);
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log('Received:', data);
+                
+                switch (data.type) {
+                    case 'roomCreated':
+                    case 'roomJoined':
+                        playerId = data.playerId;
+                        roomCode = data.roomCode;
+                        isHost = data.isHost;
+                        localStorage.setItem('roomCode', roomCode);
+                        showGameCard();
+                        break;
+                        
+                    case 'gameState':
+                        updateGameState(data);
+                        break;
+                        
+                    case 'gameResult':
+                        showResult(data.role);
+                        break;
+                        
+                    case 'error':
+                        showError(data.message);
+                        break;
+                }
+            };
+        }
+
+        function createRoom() {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ type: 'createRoom' }));
+            }
+        }
+
+        function joinRoom(code = null) {
+            const roomCodeInput = document.getElementById('room-code-input');
+            const roomToJoin = code || roomCodeInput.value.trim();
+            
+            if (!roomToJoin) {
+                showError('방 코드를 입력해주세요.');
+                return;
+            }
+
+            if (roomToJoin.length !== 4) {
+                showError('방 코드는 4자리 숫자여야 합니다.');
+                return;
+            }
+
+            console.log('Attempting to join room:', roomToJoin);
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ 
+                    type: 'joinRoom',
+                    roomCode: roomToJoin.toString()
+                }));
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            setTimeout(() => {
+                errorDiv.textContent = '';
+            }, 3000);
+        }
+
+        function showGameCard() {
+            document.getElementById('room-selection').style.display = 'none';
+            document.getElementById('game-card').style.display = 'block';
+            document.getElementById('current-room-code').textContent = roomCode;
+        }
+
+        function updateGameState(state) {
+            maxPlayers = state.maxPlayers;
+            roles = state.roles;
+            currentPlayers = state.currentPlayers;
+            gameStarted = state.gameStarted;
+            isHost = state.isHost;  // 방장 상태 업데이트
+            
+            document.getElementById('max-players').value = maxPlayers;
+            document.getElementById('players-info').textContent = 
+                `현재 참가자: ${currentPlayers} / ${maxPlayers}`;
+            document.getElementById('role-info').textContent = 
+                `역할: ${isHost ? '방장' : '참가자'}`;
+            
+            document.getElementById('host-controls').style.display = 
+                isHost && !gameStarted ? 'block' : 'none';
+            
+            document.getElementById('waiting-message').style.display = 
+                !gameStarted ? 'block' : 'none';
+            
+            document.getElementById('game-area').style.display = 
+                gameStarted ? 'block' : 'none';
+
+            if (isHost) {
+                updateRolesDisplay();
+            }
+            
+            if (gameStarted) {
+                document.getElementById('game-status').textContent = '중복되지 않은 항목이 당신의 결과입니다.\n동전으로 스크래치하세요!';
+                document.getElementById('game-status').style.whiteSpace = 'pre-line';
+                document.getElementById('game-status').style.textAlign = 'center';
+                document.getElementById('game-status').style.marginBottom = '10px';
+                initCanvas();
+            }
+        }
+
+        function initCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
+            
+            ctx.fillStyle = '#808080';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function updateMaxPlayers(value) {
+            maxPlayers = Math.max(currentPlayers, parseInt(value) || 1);
+            document.getElementById('max-players').value = maxPlayers;
+            sendSettings();
+        }
+
+        function changeMaxPlayers(delta) {
+            updateMaxPlayers(maxPlayers + delta);
+        }
+
+        function toggleCoin() {
+            selectedCoin = !selectedCoin;
+            coinButton.classList.toggle('selected');
+            coin.style.display = selectedCoin ? 'block' : 'none';
+        }
+
+        function sendToServer(data) {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ ...data, playerId }));
+            }
+        }
+
+        function startGame() {
+            sendToServer({ type: 'startGame' });
+        }
+
+        function showResult(actualRole) {
+            const result = document.getElementById('result');
+            result.innerHTML = '';
+
+            const colors = [
+                '#E74C3C', // 빨강
+                '#2980B9', // 파랑
+                '#27AE60', // 초록
+                '#8E44AD', // 보라
+                '#D35400', // 주황
+                '#2C3E50'  // 남색
+            ];
+
+            const fonts = [
+                'Arial', 'Georgia', 'Verdana', '궁서체', '굴림체', 
+                'Arial Black', 'Comic Sans MS', 'Impact'
+            ];
+
+            // 실제 역할을 제외한 다른 역할들 중에서 1-2개만 랜덤하게 선택
+            const otherRoles = roles.map(r => r.name).filter(r => r !== actualRole);
+            const numDecoyRoles = Math.min(2, otherRoles.length);
+            const selectedDecoys = [];
+            
+            // 랜덤하게 속임수 역할 선택
+            while (selectedDecoys.length < numDecoyRoles && otherRoles.length > 0) {
+                const randomIndex = Math.floor(Math.random() * otherRoles.length);
+                selectedDecoys.push(otherRoles.splice(randomIndex, 1)[0]);
+            }
+            
+            // 최종 표시할 역할 배열 생성
+            let displayRoles = [];
+            
+            // 각 속임수 역할은 2번씩 추가
+            selectedDecoys.forEach(role => {
+                displayRoles.push(role, role);
+            });
+            
+            // 실제 역할 1번 추가
+            displayRoles.push(actualRole);
+            
+            // 배열을 무작위로 섞기
+            for (let i = displayRoles.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [displayRoles[i], displayRoles[j]] = [displayRoles[j], displayRoles[i]];
+            }
+            
+            const usedPositions = [];
+
+            function isValidPosition(newX, newY) {
+                for (const pos of usedPositions) {
+                    const distance = Math.sqrt(
+                        Math.pow(newX - pos.x, 2) + 
+                        Math.pow(newY - pos.y, 2)
+                    );
+                    if (distance < 40) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            function findNewPosition() {
+                let x, y;
+                let attempts = 0;
+                // 여백을 더 넓게 (15-85%)
+                do {
+                    x = Math.random() * 70 + 15;
+                    y = Math.random() * 70 + 15;
+                    attempts++;
+                    if (attempts > 50) {
+                        // 50번 시도 후에도 적절한 위치를 못 찾으면
+                        // 현재 사용된 위치들과 가장 멀리 떨어진 위치 찾기
+                        let bestDistance = 0;
+                        let bestPosition = { x: 50, y: 50 };
+                        
+                        for (let testX = 15; testX <= 85; testX += 5) {
+                            for (let testY = 15; testY <= 85; testY += 5) {
+                                let minDistance = Number.MAX_VALUE;
+                                for (const pos of usedPositions) {
+                                    const distance = Math.sqrt(
+                                        Math.pow(testX - pos.x, 2) + 
+                                        Math.pow(testY - pos.y, 2)
+                                    );
+                                    minDistance = Math.min(minDistance, distance);
+                                }
+                                if (minDistance > bestDistance) {
+                                    bestDistance = minDistance;
+                                    bestPosition = { x: testX, y: testY };
+                                }
+                            }
+                        }
+                        return bestPosition;
+                    }
+                } while (!isValidPosition(x, y));
+                return { x, y };
+            }
+
+            displayRoles.forEach((role, i) => {
+                const textDiv = document.createElement('div');
+                textDiv.textContent = role;
+                
+                if (role === actualRole) {
+                    textDiv.dataset.isActual = 'true';
+                }
+
+                textDiv.style.position = 'absolute';
+                
+                const position = findNewPosition();
+                textDiv.style.left = position.x + '%';
+                textDiv.style.top = position.y + '%';
+                usedPositions.push(position);
+                
+                const fontSize = Math.floor(Math.random() * 12) + 24;
+                textDiv.style.fontSize = fontSize + 'px';
+                
+                const rotation = Math.random() * 90 - 45;
+                textDiv.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+                
+                const randomFont = fonts[Math.floor(Math.random() * fonts.length)];
+                textDiv.style.fontFamily = randomFont;
+                
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                textDiv.style.color = randomColor;
+                
+                textDiv.style.fontWeight = 'bold';
+                textDiv.style.whiteSpace = 'nowrap';
+
+                if (role === actualRole) {
+                    textDiv.style.textShadow = '1px 1px 2px rgba(0,0,0,0.2)';
+                }
+                
+                result.appendChild(textDiv);
+            });
+        }
+
+        function getPosition(event) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+            const clientY = event.clientY || (event.touches && event.touches[0].clientY);
+            return {
+                x: ((clientX - rect.left) / rect.width) * canvas.width,
+                y: ((clientY - rect.top) / rect.height) * canvas.height
+            };
+        }
+
+        function updateCoinPosition(event) {
+            if (!selectedCoin) return;
+            const rect = container.getBoundingClientRect();
+            const x = (event.clientX || event.touches[0].clientX) - rect.left;
+            const y = (event.clientY || event.touches[0].clientY) - rect.top;
+            coin.style.left = `${x}px`;
+            coin.style.top = `${y}px`;
+        }
+
+        function scratch(event) {
+            if (!selectedCoin || !isDrawing) return;
+            event.preventDefault();
+            
+            const currentPos = getPosition(event);
+            updateCoinPosition(event);
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'butt';
+            ctx.moveTo(lastPosition.x - 20, lastPosition.y - 20);
+            ctx.lineTo(currentPos.x - 20, currentPos.y - 20);
+            ctx.stroke();
+
+            lastPosition = currentPos;
+        }
+
+        function startDrawing(event) {
+            if (!selectedCoin) return;
+            event.preventDefault();
+            isDrawing = true;
+            lastPosition = getPosition(event);
+            updateCoinPosition(event);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+        }
+
+        container.addEventListener('mousemove', (event) => {
+            if (selectedCoin) {
+                updateCoinPosition(event);
+                if (isDrawing) scratch(event);
+            }
+        });
+
+        container.addEventListener('mousedown', startDrawing);
+        container.addEventListener('mouseup', stopDrawing);
+        container.addEventListener('mouseleave', stopDrawing);
+
+        container.addEventListener('touchstart', (e) => {
+            e.preventDefault();  // 스크롤 방지
+            startDrawing(e);
+        }, { passive: false });
+
+        container.addEventListener('touchmove', (e) => {
+            e.preventDefault();  // 스크롤 방지
+            if (selectedCoin) {
+                updateCoinPosition(e);
+                if (isDrawing) scratch(e);
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            stopDrawing();
+        }, { passive: false });
+
+        document.getElementById('room-code-input').addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+        });
+
+        function leaveRoom() {
+            document.getElementById('room-selection').style.display = 'block';
+            document.getElementById('game-card').style.display = 'none';
+            document.getElementById('game-area').style.display = 'none';
+            
+            roomCode = null;
+            isHost = false;
+            gameStarted = false;
+            localStorage.removeItem('roomCode');
+            
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({ 
+                    type: 'leaveRoom',
+                    playerId: playerId
+                }));
+            }
+
+            document.getElementById('room-code-input').value = '';
+        }
+
+        connectWebSocket();
+    </script>
+</body>
+</html>
