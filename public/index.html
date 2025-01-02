@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>뽑기</title>
+    <title>스마또 - 고민하는 당신들을 위한 영리한 선택 | Make Smart Choice Together</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="스마또는 결정하기 어려운 순간, 친구들과 함께 더 나은 선택을 할 수 있도록 도와주는 실시간 미니게임입니다. 고민되는 선택의 순간, 스마또와 함께하세요!">
+    <meta name="keywords" content="스마또, smartto, smart choice, 선택 도우미, 결정 게임, 실시간 게임, 온라인 투표, 멀티플레이어 게임, 고민 해결">
+    <meta name="author" content="스마또">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
         * {
@@ -12,132 +15,168 @@
             padding: 0;
         }
 
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #1d4ed8;
+            --background-color: #f0f0f0;
+            --card-background: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+        }
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
-            background-color: #f0f0f0;
+            background-color: var(--background-color);
             min-height: 100vh;
             padding: 10px;
         }
-        
+
         .container {
             width: 100%;
             max-width: 500px;
             margin: auto;
+            position: relative;
         }
-        
+
+        .guide_li {
+            margin-left: 35px;
+        }
+
+        .toggle-info {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toggle-info:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+        }
+
+        .toggle-info svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-info.active svg {
+            transform: rotate(180deg);
+        }
+
+        .info-sections {
+            transition: all 0.3s ease;
+            max-height: 2000px;
+            opacity: 1;
+            overflow: hidden;
+        }
+
+        .info-sections.hidden {
+            max-height: 0;
+            opacity: 0;
+            margin: 0;
+            padding: 0;
+        }
+
         .card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             margin-bottom: 15px;
             width: 100%;
+            transition: all 0.3s ease;
         }
 
-        @media screen and (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-            
-            .card {
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-
-            .settings {
-                flex-wrap: wrap;
-            }
-
-            h2 {
-                font-size: 1.5em;
-                margin-bottom: 10px;
-            }
-
-            button {
-                padding: 6px 12px;
-                font-size: 14px;
-            }
-
-            input {
-                font-size: 14px;
-            }
-
-            .room-input {
-                width: 100px;
-            }
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-            background-color: #f0f0f0;
+
+        .brand-name {
+            font-family: 'Arial Black', 'Helvetica Bold', sans-serif;
+            font-weight: 900;
+            color: var(--primary-color);
+            letter-spacing: 0.05em;
         }
-        
-        .container {
-            max-width: 500px;
-            width: 100%;
+
+        .brand-slogan {
+            font-family: 'Arial', sans-serif;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            margin-top: 5px;
         }
-        
-        .card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
+
         .settings {
             display: flex;
             gap: 10px;
             margin: 10px 0;
             align-items: center;
         }
-        
+
         button {
             padding: 8px 16px;
             border: none;
-            border-radius: 4px;
-            background: #3b82f6;
+            border-radius: 6px;
+            background: var(--primary-color);
             color: white;
             cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
-        
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--secondary-color);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
         }
-        
-        .coin-button {
-            padding: 4px;
-            border-radius: 50%;
-            transition: transform 0.2s;
-        }
 
-        .coin-button:hover {
-            transform: scale(1.1);
-        }
-
-        .coin-button.selected {
-            background-color: rgba(0, 0, 0, 0.1);
-            transform: scale(0.95);
-        }
-        
         input {
             width: 60px;
-            padding: 4px;
+            padding: 8px;
             text-align: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
         .room-input {
-            width: 120px;
-            padding: 8px;
+            width: 140px;
+            padding: 10px;
             font-size: 16px;
             margin-right: 10px;
         }
-        
+
         .scratch-area {
             position: relative;
             width: 100%;
@@ -147,7 +186,7 @@
             overflow: hidden;
             cursor: crosshair;
         }
-        
+
         .result {
             position: absolute;
             inset: 0;
@@ -155,7 +194,7 @@
             background: white;
             overflow: hidden;
         }
-        
+
         canvas {
             position: absolute;
             inset: 0;
@@ -163,26 +202,9 @@
             height: 100%;
             touch-action: none;
         }
-        
-        .coin {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            pointer-events: none;
-            transform: translate(-70%, -70%);
-            transition: transform 0.05s;
-            z-index: 10;
-        }
-        
-        .coin img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
+
         .leave-button {
             background-color: #ef4444;
-            color: white;
             padding: 4px 8px;
             font-size: 12px;
             margin-left: 10px;
@@ -212,23 +234,20 @@
             padding: 20px;
         }
 
-        .room-selection button {
-            margin: 5px;
-        }
-
         .room-code {
             font-size: 24px;
             font-weight: bold;
             text-align: center;
             margin: 20px 0;
-            color: #3b82f6;
+            color: var(--primary-color);
         }
 
         .roles-container {
             margin: 10px 0;
             padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: #f9fafb;
         }
 
         .role-item {
@@ -236,54 +255,279 @@
             align-items: center;
             gap: 10px;
             margin: 5px 0;
-            padding: 5px;
-            background-color: #f8f8f8;
-            border-radius: 4px;
-        }
-
-        .role-item input[type="text"] {
-            width: 100px;
-            padding: 4px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .role-item button {
-            padding: 4px 8px;
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .add-role-button {
-            width: 100%;
-            margin-top: 10px;
-            padding: 8px;
-            background-color: #10b981;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .add-role-button:hover {
-            background-color: #059669;
+            padding: 10px;
+            background-color: white;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .role-total {
             margin-top: 10px;
             text-align: right;
             color: #666;
+            font-weight: 500;
+        }
+
+        .content-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .content-section h3 {
+            color: var(--text-primary);
+            margin: 15px 0 10px;
+            font-size: 1.2em;
+        }
+
+        .content-section p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        .guide-steps {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .guide-steps li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .highlight-box {
+            background: #f8f9fa;
+            padding: 3px 30px 15px;
+            border-left: 4px solid var(--primary-color);
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .benefit-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .use-cases {
+            margin: 15px 0;
+        }
+
+        .use-case-item {
+            margin-bottom: 15px;
+            padding: 3px 30px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            color: #666;
+        }
+
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .card {
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .settings {
+                flex-wrap: wrap;
+            }
+
+            button {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            input {
+                font-size: 14px;
+            }
+
+            .room-input {
+                width: 100px;
+            }
+
+            .toggle-info {
+                top: 10px;
+                right: 10px;
+            }
+
+            .container {
+                padding: 5px;
+            }
+            
+            .content-section {
+                padding: 10px;  /* 패딩 축소 */
+            }
+            
+            .highlight-box {
+                padding: 3px 10px 10px;  /* 패딩 더 축소 */
+            }
+            
+            .guide_li {
+                margin-left: 15px;  /* 마진 더 축소 */
+            }
+            
+            .use-case-item {
+                padding: 3px 15px 10px;  /* 패딩 축소 */
+            }
+
+            /* 폰트 사이즈도 조정 */
+            .content-section h2 {
+                font-size: 1.3em;
+            }
+            
+            .content-section h3 {
+                font-size: 1.1em;
+            }
+            
+            .content-section p {
+                font-size: 0.95em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 토글 버튼 -->
+        <button class="toggle-info">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 9l6 6 6-6"/>
+            </svg>
+            소개 보기
+        </button>
+
+        <!-- 소개 섹션들 -->
+        <div class="info-sections hidden">
+            <!-- 소개 섹션 -->
+            <div class="content-section">
+                <h1 class="brand-name">스마또</h1>
+                <p class="brand-slogan">고민하는 당신들을 위한 영리한 선택</p>
+                
+                <div class="highlight-box" style="padding: 20px 20px 5px;">
+                    <p>스마또는 일상 속 크고 작은 결정들을 더 쉽고 재미있게 만들어주는 실시간 의사결정 플랫폼입니다. 혼자 고민하지 말고, 함께 만드는 현명한 선택을 경험해보세요.</p>
+                </div>
+
+                <h3>왜 스마또인가요?</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <h4>공정한 선택</h4>
+                        <p>무작위 알고리즘을 통한 편견 없는 의사결정</p>
+                    </div>
+                    <div class="benefit-item">
+                        <h4>실시간 상호작용</h4>
+                        <p>여러 명이 동시에 참여하는 실시간 경험</p>
+                    </div>
+                    <div class="benefit-item">
+                        <h4>스크래치 재미</h4>
+                        <p>복권 긁기 같은 재미있는 결과 확인 방식</p>
+                    </div>
+                    <div class="benefit-item">
+                        <h4>간편한 사용</h4>
+                        <p>번거로운 회원가입 없이 즉시 시작</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사용 사례 섹션 -->
+            <div class="content-section">
+                <h2>스마또 활용 가이드</h2>
+                
+                <div class="use-cases">
+                    <div class="use-case-item">
+                        <h3>1. 역할 배분</h3>
+                        <ul>
+                            <li class="guide_li">게임에서 마피아/시민 역할 분배</li>
+                            <li class="guide_li">팀 프로젝트의 파트 배분</li>
+                            <li class="guide_li">조별 활동의 역할 분담</li>
+                            <li class="guide_li">발표 순서 정하기</li>
+                        </ul>
+                    </div>
+            
+                    <div class="use-case-item">
+                        <h3>2. 자리/위치 배정</h3>
+                        <ul>
+                            <li class="guide_li">회의/식사 자리 배치</li>
+                            <li class="guide_li">발표/공연 순서 배정</li>
+                            <li class="guide_li">조별 좌석 배정</li>
+                            <li class="guide_li">담당 구역 분배</li>
+                        </ul>
+                    </div>
+            
+                    <div class="use-case-item">
+                        <h3>3. 무작위 선택</h3>
+                        <ul>
+                            <li class="guide_li">상품/상자 배분</li>
+                            <li class="guide_li">경품 당첨자 선정</li>
+                            <li class="guide_li">무작위 팀 구성</li>
+                            <li class="guide_li">제비뽑기 대체</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상세 사용 방법 -->
+            <div class="content-section">
+                <h2>어떻게 사용하나요?</h2>
+                
+                <div class="guide-steps">
+                    <h3>방 만들기</h3>
+                    <ol>
+                        <li class="guide_li">메인 화면에서 '방 만들기' 버튼을 클릭합니다.</li>
+                        <li class="guide_li">자동으로 생성된 4자리 방 코드를 친구들과 공유합니다.</li>
+                        <li class="guide_li">방장으로서 참여 인원과 선택 항목을 설정할 수 있습니다.</li>
+                        <li class="guide_li">모든 참여자가 준비되면 게임을 시작합니다.</li>
+                    </ol>
+
+                    <h3>방 참여하기</h3>
+                    <ol>
+                        <li class="guide_li">친구에게 받은 4자리 방 코드를 입력합니다.</li>
+                        <li class="guide_li">참여 후 방장의 게임 시작을 기다립니다.</li>
+                        <li class="guide_li">게임이 시작되면 스크래치를 통해 결과를 확인합니다.</li>
+                        <li class="guide_li">모두의 결과가 공개되면 게임이 종료됩니다.</li>
+                    </ol>
+                </div>
+
+                <div class="highlight-box">
+                    <h3>스마또 사용 팁</h3>
+                    <ul>
+                        <li class="guide_li">인원이 많을수록 더 재미있어요! 방장이 설정한 최대 인원까지 참여할 수 있습니다.</li>
+                        <li class="guide_li">결과는 스크래치를 통해 확인할 수 있어요. 긁는 재미를 느껴보세요!</li>
+                        <li class="guide_li">중복되지 않은 항목이 당신의 결과입니다.</li>
+                        <li class="guide_li">방장이 나가면 자동으로 다음 참여자에게 방장 권한이 넘어갑니다.</li>
+                        <li class="guide_li">모바일에서도 PC에서도 동일하게 즐길 수 있어요.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- 방 선택 카드 -->
         <div class="card" id="room-selection">
-            <h2>뽑기</h2>
+            <h2>스마또</h2>
             <div class="room-selection">
                 <button onclick="createRoom()">방 만들기</button>
                 <div style="margin: 20px 0;">
@@ -294,9 +538,9 @@
             </div>
         </div>
 
-                    <!-- 게임 카드 -->
+        <!-- 게임 카드 -->
         <div class="card" id="game-card" style="display: none;">
-            <h2>나만 아니면 됩니다</h2>
+            <h2>스마또</h2>
             <div class="room-info">
                 방 코드: <span id="current-room-code"></span>
                 <button onclick="leaveRoom()" class="leave-button">나가기</button>
@@ -360,6 +604,20 @@
         let selectedCoin = false;
         let isDrawing = false;
         let lastPosition = { x: 0, y: 0 };
+        
+        // 토글 기능
+        document.querySelector('.toggle-info').addEventListener('click', function() {
+            const infoSections = document.querySelector('.info-sections');
+            const button = this;
+            
+            button.classList.toggle('active');
+            infoSections.classList.toggle('hidden');
+            
+            // 버튼 텍스트 변경
+            button.innerHTML = button.classList.contains('active') 
+                ? `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>소개 숨기기`
+                : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>소개 보기`;
+        });
 
         function updateRolesDisplay() {
             const container = document.getElementById('roles-list');
