@@ -1,4 +1,4 @@
-# ppobgi
+# smartto
 뽑기 시뮬레이터
 
 # AWS - EC2 - 인스턴스 정보
