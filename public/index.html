@@ -359,6 +359,11 @@
             text-align: center; /* 내부 컨텐츠 중앙 정렬 */
         }
 
+        .coin img {
+            width: 50px;
+            height: 50px;
+        }
+
         @media screen and (max-width: 480px) {
             body {
                 padding: 5px;
@@ -870,6 +875,7 @@
         function toggleCoin() {
             selectedCoin = !selectedCoin;
             coinButton.classList.toggle('selected');
+            coinButton.style.display = selectedCoin ? 'none' : 'inline-block';
             coin.style.display = selectedCoin ? 'block' : 'none';
         }
 
@@ -1031,10 +1037,21 @@
         function updateCoinPosition(event) {
             if (!selectedCoin) return;
             const rect = container.getBoundingClientRect();
-            const x = (event.clientX || event.touches[0].clientX) - rect.left;
-            const y = (event.clientY || event.touches[0].clientY) - rect.top;
-            coin.style.left = `${x}px`;
-            coin.style.top = `${y}px`;
+            const clientX = event.clientX || (event.touches && event.touches[0].clientX);
+            const clientY = event.clientY || (event.touches && event.touches[0].clientY);
+            const x = Math.round(clientX - rect.left - 50); // 정확한 픽셀 위치를 위해 반올림
+            const y = Math.round(clientY - rect.top - 50);
+            
+            // 이전 transform이나 다른 스타일 속성을 모두 초기화
+            coin.style.cssText = `
+                position: absolute;
+                left: ${x}px;
+                top: ${y}px;
+                width: 50px;
+                height: 50px;
+                pointer-events: none;
+                z-index: 1000;
+            `;
         }
 
         function scratch(event) {
@@ -1046,10 +1063,10 @@
 
             ctx.globalCompositeOperation = 'destination-out';
             ctx.beginPath();
-            ctx.lineWidth = 10;
+            ctx.lineWidth = 15;
             ctx.lineCap = 'butt';
-            ctx.moveTo(lastPosition.x - 20, lastPosition.y - 20);
-            ctx.lineTo(currentPos.x - 20, currentPos.y - 20);
+            ctx.moveTo(lastPosition.x - 40, lastPosition.y - 40);
+            ctx.lineTo(currentPos.x - 40, currentPos.y - 40);
             ctx.stroke();
 
             lastPosition = currentPos;
